@@ -1,26 +1,49 @@
 <!DOCTYPE html>
 <html>
   <head>
-       <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0">
-        <meta name="description" content="A conversational AI system that listens, learns, and challenges">
-        <meta property="og:title" content="ChatGPT">
-        <meta property="og:image" content="https://bettergpt.chat/social.png">
-        <meta property="og:description" content="A conversational AI system that listens, learns, and challenges">
-        <meta property="og:url" content="https://chat.ducknha.shop/">
-        <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-        <link rel="manifest" href="../site.webmanifest">
-        <title>Nguyễn Hồng Anh Đức | ChatGPT</title>
-    <meta http-equiv="refresh" content="0;url=https://chat.ducknha.shop" />
+    <meta charset="UTF-8">
+    <title>OpenAI Image Generation</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-      // Fallback link
-      window.location.href = "https://chat.ducknha.shop";
+$(document).ready(function() {
+  $.getJSON('config.json', function(data) {
+    var apiKey = data.apiKey;
+    var imageUrl = data.imageUrl;
+
+    $("#generate-btn").on("click", function() {
+      var prompt = $("#prompt-input").val();
+      var headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + apiKey
+      };
+      var data = {
+        "model": "gpt-4",
+        "prompt": prompt,
+        "num_images": 1,
+        "size": "1024x1024",
+        "response_format": "url"
+      };
+      $.ajax({
+        type: "POST",
+        url: imageUrl,
+        headers: headers,
+        data: JSON.stringify(data),
+        success: function(response) {
+          var generatedImageUrl = response.data[0].url;
+          $("#result-img").attr("src", generatedImageUrl);
+        }
+      });
+    });
+  });
+});
     </script>
   </head>
   <body>
-    If your browser does not automatically redirect you, please <a href="https://chat.ducknha.shop">click here</a>.
+    <h1>OpenAI Image Generation</h1>
+    <label for="prompt-input">Prompt:</label>
+    <input type="text" id="prompt-input">
+    <button id="generate-btn">Generate</button>
+    <br>
+    <img id="result-img" src="">
   </body>
 </html>
